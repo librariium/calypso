@@ -1,0 +1,177 @@
+version: 2
+issues:
+  - name: 🛠️ Technical Debt
+    description: Address technical debt to improve code maintainability and performance
+    title: "[TECHNICAL DEBT] "
+    labels: ["technical debt"]
+    assignees:
+    - ''
+    body:
+      - type: markdown
+        attributes:
+          value: |
+            **As a** developer  
+            **I need** to address technical debt  
+            **So that** the codebase is maintainable and performs efficiently  
+
+            **Assumptions:** 
+            * Technical debt areas are identified.
+            * There is agreement on the best approach to address them.
+
+            **Acceptance Criteria:**
+            - [ ] Task 1
+            - [ ] Task 2
+            - [ ] Task 3
+  - name: 🧹 Chores
+    description: Routine maintenance tasks
+    title: "[CHORES] "
+    labels: ["chores"]
+    assignees:
+    - ''
+    body:
+      - type: markdown
+        attributes:
+          value: |
+            **As a** manager  
+            **I need** to oversee routine maintenance tasks  
+            **So that** the project remains functional and up to date  
+
+            **Assumptions:** 
+            * Routine tasks are clearly defined.
+            * Necessary tools and resources are available.
+
+            **Acceptance Criteria:**
+            - [ ] Task 1
+            - [ ] Task 2
+            - [ ] Task 3
+  - name: ✨ Enhancement
+    description: Improve existing functionalities
+    title: "[ENHANCEMENT] "
+    labels: ["enhancement"]
+    assignees:
+    - ''
+    body:
+      - type: markdown
+        attributes:
+          value: |
+            **As a** developer  
+            **I need** to enhance existing functionalities  
+            **So that** the system performs better and offers improved features  
+
+            **Assumptions:** 
+            * Existing functionalities are identified for enhancement.
+            * Clear criteria for improvement are established.
+
+            **Acceptance Criteria:**
+            - [ ] Task 1
+            - [ ] Task 2
+            - [ ] Task 3
+  - name: 🎨 Feature
+    description: Extract insights from data and/or create user-facing functionalities
+    title: "[FEATURE] "
+    labels: ["feature"]
+    assignees:
+    - ''
+    body:
+      - type: markdown
+        attributes:
+          value: |
+            **As an** analyst and/or developer  
+            **I need** to derive insights from data and/or to create user-facing functionalities  
+            **So that** we can improve user experience and/or make informed business decisions  
+
+            **Assumptions:** 
+            * Error free foundation.
+
+            **Acceptance Criteria:**
+            - [ ] Task 1
+            - [ ] Task 2
+            - [ ] Task 3
+  - name: 🐞 Bug
+    description: File a bug/issue
+    title: "[BUG] "
+    labels: ["bug"]
+    assignees:
+    - ''
+    body:
+      - type: markdown
+        attributes:
+          value: |
+            <!--
+            Note: Please search to see if an issue already exists for the bug you encountered.
+            -->
+
+            ### Current Behavior:
+            <!-- A concise description of what you're experiencing. -->
+
+            ### Expected Behavior:
+            <!-- A concise description of what you expected to happen. -->
+
+            ### Steps To Reproduce:
+            <!--
+            Example: steps to reproduce the behavior:
+            1. In this environment...
+            1. With this config...
+            1. Run '...'
+            1. See error...
+            -->
+
+            ### Environment:
+            <!--
+            Example:
+            - OS: Ubuntu 20.04
+            - Node: 13.14.0
+            - npm: 7.6.3
+            -->
+
+            ### Anything else:
+            <!--
+            Links? References? Anything that will give us more context about the issue that you are encountering!
+            -->
+  - name: 📖 Documentation
+    description: Document setup and usage and improve README.
+    title: "[DOCUMENTATION] "
+    labels: ["documentation"]
+    assignees:
+    - ''
+    body:
+      - type: markdown
+        attributes:
+          value: |
+            **As a** developer and/or project owner/manager
+            **I need** to document the setup and usage  
+            **So that** records are searchable
+            
+            **Assumptions:**
+            * Project details are available
+            
+            **Acceptance Criteria:**
+            - [ ] Document setup instructions, virtual environment setup, package installation, and script execution
+            - [ ] Add detailed when necessary
+  - name: 🚀 Deployment
+    description: Deployment an app so it's accessible and functional.
+    title: "[DEPLOYMENT] "
+    labels: ["feature"]
+    assignees:
+    - ''
+    body:
+      - type: markdown
+        attributes:
+          value: |
+            **As an** analyst and/or developer  
+            **I need** to deploy
+            **So that** the app is accessible and functional
+            
+            **Assumptions:** 
+            * The repository contains all necessary files.
+            * The deployment platform account is set up.
+            
+            **Acceptance Criteria:**
+            - [ ] Verify that the main application script is correctly named (e.g., `app.py` for Streamlit, `main.py` for other platforms).
+            - [ ] Deploy the app and verify it is accessible and functional.
+
+
+
+
+
+          
