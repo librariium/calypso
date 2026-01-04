@@ -8,3 +8,5 @@ tqdm
 langchain
 kaggle
 kagglehub
+langchain-community
+langchain-huggingface

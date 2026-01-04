@@ -42,16 +42,15 @@ path = kagglehub.dataset_download("dylanjcastillo/7k-books-with-metadata")
 csv_path = os.path.join(path, "books.csv")
 
 # ---------------------------------------------------------
-# 5. 📚 READING & CLEANING (handle null)
+# 5. 📚 READING & CLEANING
 # ---------------------------------------------------------
 print(f"📖 Reading {csv_path}...")
 df = pd.read_csv(csv_path)
 
-# 🧹 Step 1: Remove books with no description or ID (Can't search them anyway)
+# 🧹 Step 1: Remove books with no description or ID
 df = df.dropna(subset=['description', 'isbn13'])
 
-# 🧼 Step 2: "The Deep Clean" (Fixing the error you just saw)
-# Pinecone crashes if you send 'null', so we fill blanks with strings
+# 🧼 Step 2: "The Deep Clean" - Filling in the blanks!
 df['categories'] = df['categories'].fillna('General')
 df['authors'] = df['authors'].fillna('Unknown')
 df['thumbnail'] = df['thumbnail'].fillna('')
@@ -72,18 +71,19 @@ for i in tqdm(range(0, total_books, batch_size)):
     i_end = min(i + batch_size, total_books)
     batch = df.iloc[i:i_end]
     
-    # ✍️ Combine Title + Description
+    # ✍️ Combine Title + Description for the AI to read
     texts_to_embed = batch.apply(lambda x: f"{x['title']}: {x['description']}", axis=1).tolist()
     
     # ✨ Turn text into vectors
     embeddings = model.encode(texts_to_embed).tolist()
     
-    # 📦 Pack metadata (Now safe from nulls!)
+    # 📦 Pack metadata 
+    # 👇 Added 'description' to this list!
     ids = batch['isbn13'].astype(str).tolist()
-    metadata = batch[['title', 'authors', 'categories', 'thumbnail']].to_dict('records')
+    metadata = batch[['title', 'authors', 'categories', 'thumbnail', 'description']].to_dict('records')
     
     # 🔗 Zip and Upload
     to_upsert = list(zip(ids, embeddings, metadata))
     index.upsert(vectors=to_upsert)
 
-print("✅ MISSION ACCOMPLISHED! Calypso's brain is full of books! 🎉")
+print("✅ MISSION ACCOMPLISHED! Calypso's brain (and memory) is updated! 🎉")
