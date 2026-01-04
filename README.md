@@ -22,10 +22,6 @@
   </div>
 </div>
 
-<div align="center">
-  <img src="assets/demo_010426.gif" alt="Calypso Demo GIF" width="700px" shadow="md">
-</div>
-
 <details open="open">
   <summary><h2 style="display: inline-block">🕹 Table of Content</h2></summary>
   <ol>
@@ -50,8 +46,6 @@
 
 ## :sunflower: About
 A "vibe matcher" for books, integrating modern AI/ML workflows (Python/FastAPI) with consumer-facing web applications (Next.js). Calypso uses semantic search to understand the emotional context of a user's request. By leveraging vector embeddings (`all-MiniLM-L6-v2`) and the `Hardcover.app` API, it allows users to search for natural language queries like *"A sci-fi about loneliness in space"* or *"A mystery that feels like a rainy day in London"* and retrieve statistically relevant matches.
-
-
 
 ### :hammer_and_wrench: Tech Stack
 
@@ -104,6 +98,12 @@ Our core search functionality relies on a pre-built vector index derived from a 
 
 #### :heavy_plus_sign: Live Enrichment (Future Phase)
 To overcome the limitations of a static CSV (low-res images, outdated ratings), we are building a hybrid pipeline.
+
+## :joystick: Demo
+
+<div align="center">
+  <img src="assets/demo_010426.gif" alt="Calypso Demo GIF" width="700px" shadow="md">
+</div>
 
 ## :cactus: Documentation
 
