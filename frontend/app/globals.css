@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------
+   🍬 PASTEL THEME BASE
+   Sets a soft, dreamy background and readable text.
+--------------------------------------------------------- */
+@layer base {
+  body {
+    /* Gentle gradient: Soft Cream -> Very Pale Blue */
+    background: linear-gradient(to bottom right, #fff1f2, #fdf4ff, #f0f9ff);
+    color: #475569; /* Slate 600 - Softer than black */
+    min-height: 100vh;
+    font-family: sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ---------------------------------------------------------
+   ✨ UTILITIES
+   Custom UI helpers for the soft aesthetic.
+--------------------------------------------------------- */
+@layer utilities {
+  /* Cute rounded scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1; /* Light grey */
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  /* "Neomorphism" style soft card */
+  .soft-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Pastel Text Selection */
+  ::selection {
+    background-color: #fca5a5; /* Pastel Red */
+    color: #fff;
+  }
+}
