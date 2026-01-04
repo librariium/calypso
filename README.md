@@ -1,6 +1,6 @@
 <!-- PROJECT SUMMARY -->
 <div align="center">
-  <h1 align="center">Calypso 🌊</h1>
+  <h1 align="center">Calypso 🧜🏼‍♀️</h1>
 
   <p align="center">
     A semantic book recommender that uncovers the "vibe" of your next favorite read with Vector Embeddings and AI.
@@ -20,6 +20,10 @@
 ![GitHub Pull Request (open)](https://img.shields.io/github/issues-pr/librariium/calypso?color=blue) ![GitHub last commit](https://img.shields.io/github/last-commit/librariium/calypso?color=pink) ![GitHub License](https://img.shields.io/github/license/librariium/calypso?color=green) ![contributions welcome](https://img.shields.io/badge/contributions-welcome-purple.svg?style=flat)
 
   </div>
+</div>
+
+<div align="center">
+  <img src="assets/demo_010426.gif" alt="Calypso Demo GIF" width="700px" shadow="md">
 </div>
 
 <details open="open">
@@ -46,6 +50,8 @@
 
 ## :sunflower: About
 A "vibe matcher" for books, integrating modern AI/ML workflows (Python/FastAPI) with consumer-facing web applications (Next.js). Calypso uses semantic search to understand the emotional context of a user's request. By leveraging vector embeddings (`all-MiniLM-L6-v2`) and the `Hardcover.app` API, it allows users to search for natural language queries like *"A sci-fi about loneliness in space"* or *"A mystery that feels like a rainy day in London"* and retrieve statistically relevant matches.
+
+
 
 ### :hammer_and_wrench: Tech Stack
 
