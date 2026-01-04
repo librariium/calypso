@@ -3,8 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-
-######
+# ---------------------------------
+# Backend IGNORES
+# ---------------------------------
 # Ignore Python Environment
 backend/venv/
 backend/__pycache__/
@@ -18,6 +19,27 @@ backend/__pycache__/
 *.csv
 *.zip
 
+# ---------------------------------
+# FRONTEND IGNORES
+# ---------------------------------
+
+# The massive folder of installed libraries (Heavy!)
+frontend/node_modules/
+
+# The build output (Generated automatically, don't save it)
+frontend/.next/
+frontend/out/
+
+# Environment variables (Secrets for the frontend)
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Typescript junk
+*.tsbuildinfo
+next-env.d.ts
 
 # User-specific files
 *.DS_Store
