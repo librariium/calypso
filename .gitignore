@@ -3,6 +3,22 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+
+######
+# Ignore Python Environment
+backend/venv/
+backend/__pycache__/
+*.pyc
+
+# Ignore Secrets
+.env
+.env.local
+
+# Ignore Data dumps (too large for Git)
+*.csv
+*.zip
+
+
 # User-specific files
 *.DS_Store
 *.history

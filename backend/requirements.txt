@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-dotenv
+pinecone
+sentence-transformers
+pandas
+tqdm
+langchain
+kaggle
+kagglehub
