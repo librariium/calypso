@@ -84,10 +84,20 @@ A "vibe matcher" for books, integrating modern AI/ML workflows (Python/FastAPI) 
 - [x] **Natural Language Querying:** Users can type sentences describing a plot or feeling, not just keywords.
 - [x] **Vector-Based Retrieval:** Uses cosine similarity to find books with matching "vibes" in the vector space.
 
-#### :heavy_plus_sign: Hybrid Data Pipeline
+### :bar_chart: Hybrid Data Pipeline
 
-- [x] **Static Training:** Model trained on dataset.
-- [x] **Live Enrichment:** Real-time fetching of book covers, ratings, and author data via Hardcover's GraphQL API to ensure the UI is always up-to-date.
+#### :heavy_plus_sign: Static Ingestion (Current Phase)
+Our core search functionality relies on a pre-built vector index derived from a curated dataset.
+
+- [x] **Dataset:** Sourced from Kaggle (`7k-books-with-metadata`), containing titles, authors, descriptions, and thumbnails.
+- [x] **Preprocessing:** - Data cleaning via `pandas` to remove null values and standardize category tags.
+  - "The Deep Clean" logic ensures no broken records enter the database.
+- [x] **Vectorization:** - We use **Sentence Transformers** (`all-MiniLM-L6-v2`) to convert book descriptions + titles into 384-dimensional dense vectors.
+- [x] **Indexing:** - Vectors are upserted to a **Pinecone Serverless Index** (`calypso-books`) using Cosine Similarity.
+  - Metadata (Title, Author, Description) is stored alongside vectors for single-shot retrieval (avoiding a secondary database lookup).
+
+#### :heavy_plus_sign: Live Enrichment (Future Phase)
+To overcome the limitations of a static CSV (low-res images, outdated ratings), we are building a hybrid pipeline.
 
 ## :cactus: Documentation
 
@@ -115,9 +125,9 @@ A "vibe matcher" for books, integrating modern AI/ML workflows (Python/FastAPI) 
 
 ### :apple: Development
 <!-- Add development details here -->
-* [ ] Run Backend: cd backend && uvicorn main:app --reload
-* [ ] Run Frontend: cd frontend && npm run dev
-* [ ] API Docs: Access Swagger UI at http://localhost:8000/docs
+* Run Backend: cd backend && uvicorn main:app --reload
+* Run Frontend: cd frontend && npm run dev
+* API Docs: Access Swagger UI at http://localhost:8000/docs
 
 <!-- CONTRIBUTING -->
 ## :ear_of_rice: Contributing
