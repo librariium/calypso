@@ -1,153 +1,97 @@
-import os
-import httpx
-import asyncio
-from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 from pydantic import BaseModel
+from dotenv import load_dotenv
+import os
 from pinecone import Pinecone
 from langchain_huggingface import HuggingFaceEmbeddings
+from fastapi.middleware.cors import CORSMiddleware
 
-# ---------------------------------------------------------
-# 1. 🏗️ SETUP
-# ---------------------------------------------------------
 load_dotenv()
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-HARDCOVER_API_KEY = os.getenv("HARDCOVER_API_KEY")
-INDEX_NAME = "calypso-books"
-
-app = FastAPI(title="Calypso API", description="Vibe Matcher for Books 🌊")
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"], 
-    allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"], 
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# ---------------------------------------------------------
-# 2. 🧠 LOAD AI & DATABASE
-# ---------------------------------------------------------
-print("🤖 Loading Embedding Model...")
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+index = pc.Index("calypso-books")
 
-print("🌲 Connecting to Pinecone...")
-pc = Pinecone(api_key=PINECONE_API_KEY)
-index = pc.Index(INDEX_NAME)
+# 👇 UPDATED: Added year_filter
+class SearchQuery(BaseModel):
+    query: str = ""
+    author_filter: str = ""
+    year_filter: str = ""     # NEW: "2024", "2023", etc.
+    mode: str = "discovery"
+    top_k: int = 20
 
-class QueryRequest(BaseModel):
-    query: str
-    top_k: int = 6
-
-# ---------------------------------------------------------
-# 3. 🚀 HARDCOVER ENRICHMENT LOGIC
-# ---------------------------------------------------------
-async def fetch_hardcover_metadata(client, title):
-    """
-    Asks Hardcover: 'Do you know this book? Give me the HQ cover!'
-    """
-    if not HARDCOVER_API_KEY:
-        return None
-
-    url = "https://api.hardcover.app/v1/graphql"
-    headers = {
-        "Authorization": HARDCOVER_API_KEY,
-        "Content-Type": "application/json"
-    }
-    
-    # GraphQL Query: Fuzzy search by title
-    query = """
-    query BookSearch($q: String!) {
-      books(where: {title: {_ilike: $q}}, limit: 1) {
-        title
-        rating
-        users_read_count
-        images {
-          url
-        }
-      }
-    }
-    """
-    
-    try:
-        response = await client.post(url, json={'query': query, 'variables': {'q': title}}, headers=headers)
-        data = response.json()
-        
-        # Check if we got a hit
-        if data.get('data') and data['data'].get('books'):
-            book_data = data['data']['books'][0]
-            
-            # Extract the best image
-            image_url = ""
-            if book_data.get('images') and len(book_data['images']) > 0:
-                image_url = book_data['images'][0]['url']
-            
-            return {
-                "thumbnail": image_url,
-                "rating": book_data.get('rating', 0),
-                "readers": book_data.get('users_read_count', 0)
-            }
-    except Exception as e:
-        print(f"⚠️ Hardcover fetch failed for {title}: {e}")
-    
-    return None 
-
-# ---------------------------------------------------------
-# 4. 🚦 SEARCH ENDPOINT
-# ---------------------------------------------------------
 @app.post("/search")
-async def search_books(request: QueryRequest):
-    try:
-        print(f"🔎 Vibe Check: {request.query}")
-
-        # 1. EMBED & SEARCH (Static Data from Pinecone)
-        query_vector = embeddings.embed_query(request.query)
-        search_results = index.query(
-            vector=query_vector,
-            top_k=request.top_k,
-            include_metadata=True
-        )
-
-        # 2. PREPARE FOR ENRICHMENT
-        books = []
-        enrichment_tasks = []
+async def search(query: SearchQuery):
+    search_text = query.query if query.query else "books"
+    vector = embeddings.embed_query(search_text)
+    
+    # Fetch 1000 to cast a wide net
+    search_results = index.query(
+        vector=vector, 
+        top_k=1000, 
+        include_metadata=True
+    )
+    
+    reranked_matches = []
+    
+    target_author = query.author_filter.lower().strip()
+    target_year = query.year_filter.strip() # "2024"
+    
+    for match in search_results['matches']:
+        score = match['score']
+        meta = match['metadata']
         
-        # Async Client for parallel requests
-        async with httpx.AsyncClient() as client:
-            for match in search_results['matches']:
-                meta = match['metadata']
-                
-                # Default Object (From Kaggle/Pinecone)
-                book = {
-                    "id": match['id'],
-                    "score": match['score'],
-                    "title": meta.get('title', 'Unknown'),
-                    "authors": meta.get('authors', 'Unknown'),
-                    "description": meta.get('description', 'No description'),
-                    "categories": meta.get('categories', 'General'),
-                    "thumbnail": meta.get('thumbnail', ''), 
-                    "rating": 0
-                }
-                
-                # Queue up the enrichment
-                enrichment_tasks.append(
-                    fetch_hardcover_metadata(client, book['title'])
-                )
-                books.append(book)
-            
-            # 3. EXECUTE LIVE FETCH
-            # This runs all 6 requests at the same time!
-            live_data = await asyncio.gather(*enrichment_tasks)
-            
-            # Merge live data back into the books
-            for i, data in enumerate(live_data):
-                if data:
-                    if data['thumbnail']: books[i]['thumbnail'] = data['thumbnail']
-                    if data['rating']: books[i]['rating'] = data['rating']
+        title = meta.get('title', 'Unknown').lower()
+        authors = meta.get('authors', 'Unknown').lower()
+        
+        # Safe Year Check (some old books might not have a year yet)
+        book_year = str(int(meta.get('year', 0))) if meta.get('year') else "0"
 
-        return {"results": books}
+        # --- 🛡️ FILTERS ---
+        
+        # 1. Author Filter
+        if target_author and target_author not in authors:
+            continue
 
-    except Exception as e:
-        print(f"❌ Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        # 2. Year Filter (Exact Match)
+        # If user types "2023", we only show books from 2023.
+        if target_year and target_year != book_year:
+            continue
+
+        # --- SCORING ---
+        if query.mode == "library":
+            if query.query and query.query.lower() in title:
+                score += 100.0
+            elif not query.query and target_author in authors:
+                score += 50.0
+
+        elif query.mode == "discovery":
+            # Small boost for new books still applies
+            if 'hardcover' in meta.get('source', ''):
+                score += 0.05
+
+        reranked_matches.append({
+            "id": match['id'],
+            "score": score,
+            "title": meta.get('title'),
+            "authors": meta.get('authors'),
+            "description": meta.get('description'),
+            "categories": meta.get('categories'),
+            "thumbnail": meta.get('thumbnail'),
+            "rating": meta.get('rating'),
+            "readers": meta.get('users_read_count'),
+            "year": book_year # Send year back to frontend!
+        })
+
+    reranked_matches.sort(key=lambda x: x['score'], reverse=True)
+    final_results = reranked_matches[:query.top_k]
+
+    return {"results": final_results}
