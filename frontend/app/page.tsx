@@ -21,7 +21,7 @@ interface Book {
 export default function Home() {
   const [mainQuery, setMainQuery] = useState("");     
   const [authorQuery, setAuthorQuery] = useState(""); 
-  const [yearQuery, setYearQuery] = useState(""); // 👈 NEW: Year State
+  const [yearQuery, setYearQuery] = useState(""); 
   
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
@@ -49,7 +49,7 @@ export default function Home() {
       const response = await axios.post("http://127.0.0.1:8000/search", {
         query: mainQuery,
         author_filter: authorQuery,
-        year_filter: yearQuery, // 👈 Send Year
+        year_filter: yearQuery,
         mode: mode,
         top_k: 20
       });
@@ -87,11 +87,11 @@ export default function Home() {
             </button>
         </div>
 
-        {/* 🔹 3-PART SEARCH BAR */}
+        {/* 🔹 SEARCH BAR CONTAINER */}
         <motion.div className="w-full max-w-4xl relative mb-16 z-10">
           <form onSubmit={handleSearch} className={`flex flex-col md:flex-row gap-3 bg-white p-3 rounded-3xl shadow-2xl border transition-all ${mode === "discovery" ? "shadow-rose-100/50 border-rose-50" : "shadow-cyan-100/50 border-cyan-50"}`}>
             
-            {/* 1. MAIN QUERY */}
+            {/* 1. MAIN QUERY (Title/Vibe) */}
             <div className="flex-grow relative group w-full md:w-2/5">
                 <div className={`absolute top-4 left-4 ${mode === "discovery" ? "text-rose-300" : "text-cyan-300"}`}>
                     {mode === "discovery" ? <Sparkles size={20} /> : <BookOpen size={20} />}
@@ -101,13 +101,19 @@ export default function Home() {
                     value={mainQuery}
                     onChange={(e) => setMainQuery(e.target.value)}
                     placeholder={mode === "discovery" ? "Describe vibe..." : "Book Title..."}
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all text-slate-700 placeholder-slate-400"
+                    className="w-full pl-12 pr-10 py-4 bg-slate-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all text-slate-700 placeholder-slate-400"
                     style={{ '--tw-ring-color': mode === 'discovery' ? '#fda4af' : '#67e8f9' } as any}
                 />
+                {/* ❌ Clear Button for Main Query */}
+                {mainQuery && (
+                  <button type="button" onClick={() => setMainQuery("")} className="absolute right-3 top-4 text-slate-300 hover:text-slate-500 transition-colors p-1">
+                    <X size={16} />
+                  </button>
+                )}
             </div>
 
             {/* 2. AUTHOR FILTER */}
-            <div className="flex-grow md:w-1/4 relative">
+            <div className="flex-grow md:w-1/4 relative group">
                 <div className="absolute top-4 left-4 text-slate-300">
                     <User size={20} />
                 </div>
@@ -116,12 +122,18 @@ export default function Home() {
                     value={authorQuery}
                     onChange={(e) => setAuthorQuery(e.target.value)}
                     placeholder="Author..."
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all text-slate-700 placeholder-slate-400"
+                    className="w-full pl-12 pr-10 py-4 bg-slate-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all text-slate-700 placeholder-slate-400"
                 />
+                {/* ❌ Clear Button for Author */}
+                {authorQuery && (
+                  <button type="button" onClick={() => setAuthorQuery("")} className="absolute right-3 top-4 text-slate-300 hover:text-slate-500 transition-colors p-1">
+                    <X size={16} />
+                  </button>
+                )}
             </div>
             
-            {/* 3. YEAR FILTER (NEW) */}
-            <div className="flex-grow md:w-1/5 relative">
+            {/* 3. YEAR FILTER */}
+            <div className="flex-grow md:w-1/5 relative group">
                 <div className="absolute top-4 left-4 text-slate-300">
                     <Calendar size={20} />
                 </div>
@@ -130,8 +142,14 @@ export default function Home() {
                     value={yearQuery}
                     onChange={(e) => setYearQuery(e.target.value)}
                     placeholder="Year..."
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all text-slate-700 placeholder-slate-400"
+                    className="w-full pl-12 pr-10 py-4 bg-slate-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all text-slate-700 placeholder-slate-400"
                 />
+                {/* ❌ Clear Button for Year */}
+                {yearQuery && (
+                  <button type="button" onClick={() => setYearQuery("")} className="absolute right-3 top-4 text-slate-300 hover:text-slate-500 transition-colors p-1">
+                    <X size={16} />
+                  </button>
+                )}
             </div>
             
             {/* SEARCH BUTTON */}
@@ -172,7 +190,6 @@ export default function Home() {
                   <div>
                     <div className="flex items-center gap-2 mb-3 flex-wrap">
                       <span className="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">{book.categories}</span>
-                      {/* Show YEAR in the card too! */}
                       {book.year && book.year !== "0" && <span className="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-1 rounded-full">{book.year}</span>}
                       {book.rating && book.rating > 0 && <span className="bg-amber-50 text-amber-500 text-xs font-bold px-3 py-1 rounded-full border border-amber-100">⭐ {book.rating.toFixed(1)}</span>}
                     </div>
